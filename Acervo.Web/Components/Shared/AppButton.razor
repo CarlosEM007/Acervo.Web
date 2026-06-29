@@ -1,0 +1,35 @@
+﻿@inherits AppButtonBase
+
+<button id="@Id"
+        type="@Type"
+        class="@ButtonClass"
+        style="@ButtonStyle"
+        disabled="@(Disabled || Loading)"
+        @onclick="HandleClick">
+
+    @if (Loading)
+    {
+        <span class="app-btn__spinner" aria-hidden="true"></span>
+        @if (!string.IsNullOrWhiteSpace(LoadingText))
+        {
+            <span class="app-btn__label">@LoadingText</span>
+        }
+    }
+    else
+    {
+        @if (LeadingIcon is not null)
+        {
+            <span class="app-btn__icon app-btn__icon--leading">@LeadingIcon</span>
+        }
+
+        @if (ChildContent is not null)
+        {
+            <span class="app-btn__label">@ChildContent</span>
+        }
+
+        @if (TrailingIcon is not null)
+        {
+            <span class="app-btn__icon app-btn__icon--trailing">@TrailingIcon</span>
+        }
+    }
+</button>

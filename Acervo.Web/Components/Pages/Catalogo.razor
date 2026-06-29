@@ -1,0 +1,174 @@
+@page "/catalogo"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Catálogo — Acervo</PageTitle>
+
+<div class="catalogo-page">
+    <!-- Cabeçalho do catálogo -->
+    <div class="catalogo-header">
+        <h1 class="catalogo-header__title">Catálogo</h1>
+        <p class="catalogo-header__subtitle">@TotalBooks resultados encontrados</p>
+
+        <div class="catalogo-header__search">
+            <div class="catalogo-search-bar">
+                <span class="catalogo-search-bar__icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="search"
+                       class="catalogo-search-bar__input"
+                       placeholder="Buscar livros, autores, categorias…"
+                       value="@SearchQuery"
+                       @oninput="@(e => { SearchQuery = e.Value?.ToString() ?? string.Empty; ApplyFilters(); })" />
+            </div>
+        </div>
+    </div>
+
+    <div class="catalogo-body">
+        <!-- Filtros laterais -->
+        <aside class="filtros @(FiltersOpen ? "filtros--open" : "")">
+            <div class="filtros__header">
+                <h2 class="filtros__title">Filtros</h2>
+                <button class="filtros__clear" @onclick="ClearFilters">Limpar</button>
+            </div>
+
+            <!-- Categoria -->
+            <div class="filtros__group">
+                <h3 class="filtros__group-title">Categoria</h3>
+                @foreach (var cat in AvailableCategories)
+                {
+                    <label class="filtros__check">
+                        <input type="checkbox"
+                               checked="@SelectedCategories.Contains(cat.Id)"
+                               @onchange="@(e => ToggleCategory(cat.Id, (bool)e.Value!))" />
+                        <span class="filtros__check-label">@cat.Description</span>
+                        <span class="filtros__check-count">@cat.Count</span>
+                    </label>
+                }
+            </div>
+
+            <!-- Preço -->
+            <div class="filtros__group">
+                <h3 class="filtros__group-title">Faixa de preço</h3>
+                <div class="filtros__price-range">
+                    <AppInput Label="De" Type="number" Placeholder="0,00" Width="100%"
+                              @bind-Value="PriceMin" />
+                    <AppInput Label="Até" Type="number" Placeholder="999,99" Width="100%"
+                              @bind-Value="PriceMax" />
+                </div>
+            </div>
+
+            <!-- Ordenação (mobile) -->
+            <div class="filtros__group">
+                <h3 class="filtros__group-title">Ordenar por</h3>
+                @foreach (var (value, label) in SortOptions)
+                {
+                    <label class="filtros__radio">
+                        <input type="radio" name="sort"
+                               value="@value"
+                               checked="@(SelectedSort == value)"
+                               @onchange="@(() => SelectedSort = value)" />
+                        <span>@label</span>
+                    </label>
+                }
+            </div>
+
+            <AppButton Variant="primary" FullWidth="true" OnClickCallback="ApplyFilters">
+                Aplicar filtros
+            </AppButton>
+        </aside>
+
+        <!-- Lista de livros -->
+        <div class="catalogo-results">
+            <!-- Toolbar -->
+            <div class="catalogo-toolbar">
+                <button class="catalogo-toolbar__filter-btn" @onclick="@(() => FiltersOpen = !FiltersOpen)">
+                    <i class="fa-solid fa-sliders"></i> Filtros
+                </button>
+
+                <div class="catalogo-toolbar__sort">
+                    <label class="catalogo-toolbar__sort-label">Ordenar:</label>
+                    <select class="catalogo-toolbar__sort-select"
+                            @bind="SelectedSort">
+                        @foreach (var (value, label) in SortOptions)
+                        {
+                            <option value="@value">@label</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="catalogo-toolbar__view">
+                    <button class="@(ViewMode == "grid" ? "active" : "")" @onclick="@(() => ViewMode = "grid")" title="Grade"><i class="fa-solid fa-grip"></i></button>
+                    <button class="@(ViewMode == "list" ? "active" : "")" @onclick="@(() => ViewMode = "list")" title="Lista"><i class="fa-solid fa-list"></i></button>
+                </div>
+            </div>
+
+            <!-- Grid de livros -->
+            @if (IsLoading)
+            {
+                <div class="catalogo-loading">
+                    <div class="catalogo-loading__spinner"></div>
+                    <p>Carregando livros…</p>
+                </div>
+            }
+            else if (!FilteredBooks.Any())
+            {
+                <div class="catalogo-empty">
+                    <span class="catalogo-empty__icon"><i class="fa-solid fa-inbox"></i></span>
+                    <h3>Nenhum livro encontrado</h3>
+                    <p>Tente ajustar seus filtros ou buscar por outro termo.</p>
+                    <AppButton Variant="outline" OnClickCallback="ClearFilters">Limpar filtros</AppButton>
+                </div>
+            }
+            else
+            {
+                <div class="books-grid books-grid--@ViewMode">
+                    @foreach (var book in FilteredBooks)
+                    {
+                        <div class="book-card @(ViewMode == "list" ? "book-card--list" : "")"
+                             @onclick="@(() => Navigation.NavigateTo($"/livro/{book.Id}"))">
+                            <div class="book-card__cover">
+                                @if (!string.IsNullOrWhiteSpace(book.CoverImageUrl))
+                                {
+                                    <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="book-card__cover-placeholder"><i class="fa-solid fa-book-open"></i></div>
+                                }
+                            </div>
+                            <div class="book-card__body">
+                                <span class="book-card__category">@book.CategoryName</span>
+                                <h3 class="book-card__title">@book.Title</h3>
+                                <p class="book-card__author">@book.AuthorName</p>
+                                @if (ViewMode == "list")
+                                {
+                                    <p class="book-card__desc">@book.Description</p>
+                                }
+                                <div class="book-card__price">
+                                    <span class="book-card__price-current">R$ @book.Price.ToString("N2")</span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                <!-- Paginação -->
+                <div class="catalogo-pagination">
+                    <button class="pagination-btn" disabled="@(CurrentPage <= 1)"
+                            @onclick="@(() => GoToPage(CurrentPage - 1))">← Anterior</button>
+
+                    @for (int p = 1; p <= TotalPages; p++)
+                    {
+                        var pg = p;
+                        <button class="pagination-btn @(pg == CurrentPage ? "pagination-btn--active" : "")"
+                                @onclick="@(() => GoToPage(pg))">@pg</button>
+                    }
+
+                    <button class="pagination-btn" disabled="@(CurrentPage >= TotalPages)"
+                            @onclick="@(() => GoToPage(CurrentPage + 1))">Próxima →</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>

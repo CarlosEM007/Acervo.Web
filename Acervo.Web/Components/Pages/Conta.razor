@@ -1,0 +1,163 @@
+@page "/conta"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Minha Conta — Acervo</PageTitle>
+
+<div class="account-page">
+    <!-- Sidebar de navegação da conta -->
+    <aside class="account-nav">
+        <div class="account-nav__profile">
+            <div class="account-nav__avatar">
+                @GetInitials(UserName)
+            </div>
+            <div>
+                <p class="account-nav__name">@UserName</p>
+                <p class="account-nav__email">@UserEmail</p>
+            </div>
+        </div>
+
+        <nav class="account-nav__links">
+            @foreach (var tab in Tabs)
+            {
+                <button class="account-nav__link @(ActiveTab == tab.Key ? "active" : "")"
+                        @onclick="@(() => ActiveTab = tab.Key)">
+                    <i class="@tab.Icon"></i>
+                    <span>@tab.Label</span>
+                </button>
+            }
+        </nav>
+    </aside>
+
+    <!-- Conteúdo da tab ativa -->
+    <div class="account-content">
+        @if (ActiveTab == "perfil")
+        {
+            <div class="account-section">
+                <h2 class="account-section__title">Informações pessoais</h2>
+                <div class="account-form">
+                    <AppInput Label="Nome completo" Width="100%"
+                              @bind-Value="EditName" />
+                    <AppInput Label="E-mail" Type="email" Width="100%"
+                              @bind-Value="EditEmail" />
+                    <div class="account-form__actions">
+                        <AppButton Color="#c9a84c" TextColor="#0f172a" Size="md"
+                                   Width="160px" OnClickCallback="SaveProfile">
+                            Salvar alterações
+                        </AppButton>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(ProfileMsg))
+                    {
+                        <div class="account-feedback account-feedback--success">@ProfileMsg</div>
+                    }
+                </div>
+            </div>
+
+            <div class="account-section">
+                <h2 class="account-section__title">Alterar senha</h2>
+                <div class="account-form">
+                    <AppInput Label="Senha atual" Type="password" Width="100%"
+                              @bind-Value="CurrentPassword" />
+                    <AppInput Label="Nova senha" Type="password" Width="100%"
+                              @bind-Value="NewPassword" />
+                    <AppInput Label="Confirmar nova senha" Type="password" Width="100%"
+                              @bind-Value="ConfirmPassword" />
+                    <div class="account-form__actions">
+                        <AppButton Variant="secondary" Size="md" Width="160px"
+                                   OnClickCallback="ChangePassword">
+                            Alterar senha
+                        </AppButton>
+                    </div>
+                    @if (!string.IsNullOrWhiteSpace(PasswordMsg))
+                    {
+                        <div class="account-feedback @(PasswordSuccess ? "account-feedback--success" : "account-feedback--error")">
+                            @PasswordMsg
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (ActiveTab == "pedidos")
+        {
+            <div class="account-section">
+                <h2 class="account-section__title">Meus pedidos</h2>
+                @if (!Orders.Any())
+                {
+                    <div class="account-empty">
+                        <i class="fa-solid fa-box"></i>
+                        <p>Você ainda não fez nenhum pedido.</p>
+                        <AppButton Variant="outline" OnClickCallback="@(() => Navigation.NavigateTo("/catalogo"))">
+                            Explorar catálogo
+                        </AppButton>
+                    </div>
+                }
+                else
+                {
+                    <div class="orders-list">
+                        @foreach (var order in Orders)
+                        {
+                            <div class="order-card">
+                                <div class="order-card__header">
+                                    <span class="order-card__id">#@order.Id</span>
+                                    <span class="order-card__status order-card__status--@order.StatusSlug">
+                                        @order.StatusLabel
+                                    </span>
+                                    <span class="order-card__date">@order.Date.ToString("dd/MM/yyyy")</span>
+                                </div>
+                                <div class="order-card__items">
+                                    @foreach (var item in order.Items)
+                                    {
+                                        <span class="order-card__item">@item</span>
+                                    }
+                                </div>
+                                <div class="order-card__footer">
+                                    <span class="order-card__total">R$ @order.Total.ToString("N2")</span>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+
+        @if (ActiveTab == "biblioteca")
+        {
+            <div class="account-section">
+                <h2 class="account-section__title">Minha biblioteca</h2>
+                @if (!LibraryBooks.Any())
+                {
+                    <div class="account-empty">
+                        <i class="fa-solid fa-book"></i>
+                        <p>Sua biblioteca está vazia.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="library-grid">
+                        @foreach (var book in LibraryBooks)
+                        {
+                            <div class="library-item">
+                                <div class="library-item__cover">
+                                    <div class="book-card__cover-placeholder"><i class="fa-solid fa-book-open"></i></div>
+                                </div>
+                                <div class="library-item__info">
+                                    <h4 class="library-item__title">@book.Title</h4>
+                                    <p class="library-item__author">@book.AuthorName</p>
+                                    <div class="library-item__progress">
+                                        <div class="progress-bar">
+                                            <div class="progress-bar__fill" style="width: @book.Progress%"></div>
+                                        </div>
+                                        <span class="library-item__progress-text">@book.Progress% lido</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

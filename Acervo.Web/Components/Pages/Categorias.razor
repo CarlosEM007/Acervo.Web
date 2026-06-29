@@ -1,0 +1,29 @@
+@page "/categorias"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Categorias — Acervo</PageTitle>
+
+<div class="cats-page">
+    <div class="cats-header">
+        <h1 class="cats-header__title">Categorias</h1>
+        <p class="cats-header__subtitle">Explore por gênero e encontre sua próxima leitura</p>
+    </div>
+
+    <div class="cats-grid">
+        @foreach (var cat in Categories)
+        {
+            <a class="cat-card" href="/catalogo?categoria=@cat.Slug">
+                <div class="cat-card__icon"><i class="@cat.Icon"></i></div>
+                <div class="cat-card__body">
+                    <h2 class="cat-card__name">@cat.Name</h2>
+                    <p class="cat-card__desc">@cat.Description</p>
+                    <span class="cat-card__count">@cat.Count títulos</span>
+                </div>
+                <span class="cat-card__arrow">→</span>
+            </a>
+        }
+    </div>
+</div>

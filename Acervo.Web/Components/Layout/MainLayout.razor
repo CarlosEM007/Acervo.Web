@@ -1,0 +1,117 @@
+@inherits LayoutComponentBase
+@using Acervo.Web.Components.Shared
+
+<div class="shell">
+    <!-- Sidebar -->
+    <aside class="sidebar @(SidebarOpen ? "sidebar--open" : "")">
+        <div class="sidebar__brand">
+            <a class="sidebar__logo" href="/home">
+                <span class="sidebar__logo-icon"><i class="fa-solid fa-book-open-reader"></i></span>
+                <span class="sidebar__logo-text">Acervo</span>
+            </a>
+            <button class="sidebar__close" @onclick="ToggleSidebar" aria-label="Fechar menu">✕</button>
+        </div>
+
+        <nav class="sidebar__nav">
+            <div class="sidebar__section">
+                <span class="sidebar__section-label">Descobrir</span>
+                <NavLink class="sidebar__link" href="/home" Match="NavLinkMatch.All">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-house"></i></span> Início
+                </NavLink>
+                <NavLink class="sidebar__link" href="/catalogo">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-book-open"></i></span> Catálogo
+                </NavLink>
+                <NavLink class="sidebar__link" href="/categorias">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-tags"></i></span> Categorias
+                </NavLink>
+                <NavLink class="sidebar__link" href="/autores">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-pen-nib"></i></span> Autores
+                </NavLink>
+            </div>
+
+            <div class="sidebar__section">
+                <span class="sidebar__section-label">Minha Conta</span>
+                <NavLink class="sidebar__link" href="/favoritos">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-heart"></i></span> Favoritos
+                </NavLink>
+                <NavLink class="sidebar__link" href="/conta?tab=biblioteca">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-bookmark"></i></span> Minha Biblioteca
+                </NavLink>
+                <NavLink class="sidebar__link" href="/carrinho">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-cart-shopping"></i></span> Carrinho
+                    @if (CartCount > 0)
+                    {
+                        <span class="sidebar__badge">@CartCount</span>
+                    }
+                </NavLink>
+                <NavLink class="sidebar__link" href="/conta?tab=pedidos">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-box"></i></span> Meus Pedidos
+                </NavLink>
+                <NavLink class="sidebar__link" href="/conta">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-user"></i></span> Perfil
+                </NavLink>
+            </div>
+
+            <div class="sidebar__section">
+                <span class="sidebar__section-label">Informações</span>
+                <NavLink class="sidebar__link" href="/sobre">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-circle-info"></i></span> Sobre
+                </NavLink>
+                <NavLink class="sidebar__link" href="/contato">
+                    <span class="sidebar__link-icon"><i class="fa-solid fa-envelope"></i></span> Contato
+                </NavLink>
+            </div>
+        </nav>
+
+        <div class="sidebar__footer">
+            <button class="sidebar__logout" @onclick="Logout">
+                <i class="fa-solid fa-right-from-bracket"></i> Sair
+            </button>
+        </div>
+    </aside>
+
+    <!-- Overlay mobile -->
+    @if (SidebarOpen)
+    {
+        <div class="sidebar__overlay" @onclick="ToggleSidebar"></div>
+    }
+
+    <!-- Conteúdo principal -->
+    <div class="main-area">
+        <!-- Header -->
+        <header class="topbar">
+            <button class="topbar__menu-btn" @onclick="ToggleSidebar" aria-label="Abrir menu">
+                <span></span><span></span><span></span>
+            </button>
+
+            <div class="topbar__search">
+                <span class="topbar__search-icon"><i class="fa-solid fa-magnifying-glass"></i></span>
+                <input type="search"
+                       class="topbar__search-input"
+                       placeholder="Buscar livros, autores, categorias…"
+                       @bind="SearchQuery"
+                       @bind:event="oninput"
+                       @onkeydown="HandleSearchKey" />
+            </div>
+
+            <div class="topbar__actions">
+                <a href="/favoritos" class="topbar__action" title="Favoritos"><i class="fa-solid fa-heart"></i></a>
+                <a href="/carrinho" class="topbar__action topbar__cart" title="Carrinho">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    @if (CartCount > 0)
+                    {
+                        <span class="topbar__cart-count">@CartCount</span>
+                    }
+                </a>
+                <a href="/conta" class="topbar__avatar" title="Minha conta">
+                    <span>U</span>
+                </a>
+            </div>
+        </header>
+
+        <!-- Página -->
+        <main class="page-content">
+            @Body
+        </main>
+    </div>
+</div>

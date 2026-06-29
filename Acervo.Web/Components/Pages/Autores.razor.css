@@ -1,0 +1,141 @@
+/* ═══════════════════════════════════════════════════════
+   Autores
+   ═══════════════════════════════════════════════════════ */
+.autores-page {
+  max-width: var(--content-max);
+  margin: 0 auto;
+  padding: var(--sp-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-6);
+}
+
+.autores-header { text-align: center; }
+
+.autores-header__title {
+  font-family: var(--font-display);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  color: var(--c-text);
+  margin-bottom: var(--sp-2);
+}
+
+.autores-header__subtitle {
+  color: var(--c-text-muted);
+  margin-bottom: var(--sp-5);
+}
+
+.autores-header__search { max-width: 400px; margin: 0 auto; }
+
+/* ── Alphabet filter ──────────────────────────────────── */
+.autores-alphabet {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1);
+  justify-content: center;
+  padding: var(--sp-2) 0;
+  border-top: 1px solid var(--c-ink-muted);
+  border-bottom: 1px solid var(--c-ink-muted);
+}
+
+.autores-alphabet__btn {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--c-text-muted);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  width: 34px; height: 34px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--duration);
+}
+
+.autores-alphabet__btn:hover {
+  border-color: var(--c-gold);
+  color: var(--c-gold);
+}
+
+.autores-alphabet__btn.active {
+  background: var(--c-gold);
+  border-color: var(--c-gold);
+  color: var(--c-ink);
+}
+
+/* ── Grid ─────────────────────────────────────────────── */
+.autores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--sp-4);
+}
+
+.author-card {
+  display: flex;
+  gap: var(--sp-4);
+  padding: var(--sp-5);
+  background: var(--c-ink-soft);
+  border: 1px solid var(--c-ink-muted);
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: all var(--duration) var(--ease);
+}
+
+.author-card:hover {
+  border-color: var(--c-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.author-card__avatar {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--c-gold-dark), var(--c-gold));
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+
+.author-card__initials {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--c-ink);
+}
+
+.author-card__info { display: flex; flex-direction: column; gap: var(--sp-1); }
+
+.author-card__name {
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--c-text);
+}
+
+.author-card__bio {
+  font-size: var(--text-sm);
+  color: var(--c-text-muted);
+  line-height: 1.5;
+}
+
+.author-card__books {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--c-gold);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin-top: auto;
+}
+
+.autores-empty {
+  text-align: center;
+  padding: var(--sp-16) 0;
+  color: var(--c-text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-3);
+  font-size: 3rem;
+}
+
+@media (max-width: 600px) {
+  .autores-page { padding: var(--sp-4); }
+  .autores-grid { grid-template-columns: 1fr; }
+}

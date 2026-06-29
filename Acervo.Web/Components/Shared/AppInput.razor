@@ -1,0 +1,43 @@
+﻿@inherits AppInputBase
+
+<div class="input-wrapper" style="@WrapperStyle">
+    @if (!string.IsNullOrWhiteSpace(Label))
+    {
+        <label class="input-label" for="@Id">@Label</label>
+    }
+
+    <div class="input-container @(HasError ? "has-error" : "") @(Disabled ? "disabled" : "")">
+        @if (LeadingIcon is not null)
+        {
+            <span class="input-icon leading">@LeadingIcon</span>
+        }
+
+        <input id="@Id"
+               type="@Type"
+               class="input-field"
+               placeholder="@Placeholder"
+               value="@Value"
+               disabled="@Disabled"
+               readonly="@ReadOnly"
+               maxlength="@(MaxLength > 0 ? MaxLength : null)"
+               style="@InputStyle"
+               @oninput="HandleInput"
+               @onblur="HandleBlur"
+               @onfocus="HandleFocus" />
+
+        @if (TrailingIcon is not null)
+        {
+            <span class="input-icon trailing">@TrailingIcon</span>
+        }
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(HelperText) && !HasError)
+    {
+        <span class="input-helper">@HelperText</span>
+    }
+
+    @if (HasError && !string.IsNullOrWhiteSpace(ErrorMessage))
+    {
+        <span class="input-error">@ErrorMessage</span>
+    }
+</div>

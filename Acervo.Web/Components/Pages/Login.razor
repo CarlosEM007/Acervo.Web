@@ -1,0 +1,67 @@
+﻿@page "/"
+@layout LoginLayout
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Login — Acervo</PageTitle>
+
+<div class="login-page">
+
+    <!-- Lado esquerdo: imagem -->
+    <div class="login-cover">
+        <div class="login-cover__overlay"></div>
+    </div>
+
+    <!-- Lado direito: formulário -->
+    <div class="login-panel">
+
+        <header class="login-panel__header">
+            <span class="login-panel__logo">Acervo</span>
+        </header>
+
+        <main class="login-panel__body">
+            <h1 class="login-panel__title">Bem-vindo</h1>
+            <p class="login-panel__subtitle"></p>
+
+            <div class="login-panel__form">
+                <AppInput Label="Usuário"
+                          Placeholder="Digite seu usuário"
+                          Width="100%"
+                          @bind-Value="Usuario" />
+
+                <AppInput Label="Senha"
+                          Type="password"
+                          Placeholder="Digite sua senha"
+                          Width="100%"
+                          @bind-Value="Senha" />
+
+                <div class="login-panel__actions">
+                    <AppButton OnClickCallback="Acessar"
+                               Type="button"
+                               Size="lg"
+                               Color="#16a34a"
+                               Width="160px"
+                               Height="52px">
+                        Entrar
+                    </AppButton>
+
+                    <AppButton OnClickCallback="Registrar"
+                               Type="button"
+                               Size="lg"
+                               Color="#2563eb"
+                               Width="160px"
+                               Height="52px">
+                        Registrar-se
+                    </AppButton>
+                </div>
+            </div>
+        </main>
+
+        <footer class="login-panel__footer">
+            <span>@@acervo</span>
+        </footer>
+
+    </div>
+</div>

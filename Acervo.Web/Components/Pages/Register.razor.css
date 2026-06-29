@@ -1,0 +1,153 @@
+﻿/* ── Reset de altura para o layout pai ───────────────────────────── */
+::deep .register-page,
+:deep .register-page {
+    height: 100%;
+}
+
+/* ── Layout principal ────────────────────────────────────────────── */
+.register-page {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+/* ── Lado esquerdo: imagem (70%) ─────────────────────────────────── */
+.register-cover {
+    position: relative;
+    flex: 0 0 70%;
+    background-image: url('/images/login-bg.jpg');
+    background-size: cover;
+    background-position: center;
+}
+
+.register-cover__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient( 135deg, rgba(15, 15, 25, 0.45) 0%, rgba(15, 15, 25, 0.15) 100% );
+}
+
+/* ── Lado direito: painel (30%) ──────────────────────────────────── */
+.register-panel {
+    flex: 0 0 30%;
+    display: flex;
+    flex-direction: column;
+    background: #ffffff;
+    box-shadow: -8px 0 32px rgba(0, 0, 0, 0.08);
+    overflow-y: auto;
+}
+
+/* ── Header ──────────────────────────────────────────────────────── */
+.register-panel__header {
+    display: flex;
+    align-items: center;
+    padding: 2rem 3rem;
+    border-bottom: 1px solid #f1f1f1;
+    flex-shrink: 0;
+}
+
+.register-panel__logo {
+    font-family: 'Georgia', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: #111827;
+}
+
+/* ── Body centralizado ───────────────────────────────────────────── */
+.register-panel__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 2.5rem 3rem;
+}
+
+.register-panel__title {
+    font-family: 'Georgia', serif;
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.02em;
+}
+
+.register-panel__subtitle {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0 0 2rem;
+}
+
+/* ── Formulário ──────────────────────────────────────────────────── */
+.register-panel__form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+/* ── Ações ───────────────────────────────────────────────────────── */
+.register-panel__actions {
+    margin-top: 0.25rem;
+}
+
+/* ── Link voltar ao login ────────────────────────────────────────── */
+.register-panel__login-link {
+    text-align: center;
+    font-size: 0.84rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+    .register-panel__login-link a {
+        color: #111827;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.15s ease;
+    }
+
+        .register-panel__login-link a:hover {
+            border-bottom-color: #111827;
+        }
+
+/* ── Footer ──────────────────────────────────────────────────────── */
+.register-panel__footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem 3rem;
+    border-top: 1px solid #f1f1f1;
+    font-size: 0.8rem;
+    color: #9ca3af;
+    letter-spacing: 0.01em;
+    flex-shrink: 0;
+}
+
+/* ── Responsivo ──────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .register-cover {
+        display: none;
+    }
+
+    .register-panel {
+        flex: 1;
+    }
+
+    .register-panel__body {
+        padding: 2rem;
+        justify-content: flex-start;
+        padding-top: 2.5rem;
+    }
+
+    .register-panel__header {
+        padding: 1.5rem 2rem;
+    }
+
+    .register-panel__footer {
+        padding: 1.25rem 2rem;
+    }
+}

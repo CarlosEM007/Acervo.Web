@@ -1,0 +1,170 @@
+@page "/home"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Início — Acervo</PageTitle>
+
+<!-- Hero Section -->
+<section class="hero">
+    <div class="hero__content">
+        <p class="hero__eyebrow">Sua biblioteca digital</p>
+        <h1 class="hero__title">
+            Livros que<br />
+            <span class="hero__title-accent">transformam</span><br />
+            perspectivas
+        </h1>
+        <p class="hero__subtitle">
+            Milhares de títulos em um só lugar. Explore, descubra e leia onde quiser.
+        </p>
+        <div class="hero__actions">
+            <AppButton Color="#c9a84c" TextColor="#0f172a" Size="lg" Width="180px" Height="52px"
+                       OnClickCallback="@(() => Navigation.NavigateTo("/catalogo"))">
+                Explorar catálogo
+            </AppButton>
+            <AppButton Variant="outline" Size="lg" Width="160px" Height="52px"
+                       OnClickCallback="@(() => Navigation.NavigateTo("/categorias"))">
+                Ver categorias
+            </AppButton>
+        </div>
+    </div>
+    <div class="hero__visual">
+        <div class="hero__books-stack">
+            <div class="hero__book hero__book--back"></div>
+            <div class="hero__book hero__book--mid"></div>
+            <div class="hero__book hero__book--front">
+                <span class="hero__book-title">O Conto da Aia</span>
+                <span class="hero__book-author">Margaret Atwood</span>
+            </div>
+        </div>
+        <div class="hero__stats">
+            <div class="hero__stat">
+                <span class="hero__stat-number">12k+</span>
+                <span class="hero__stat-label">Títulos</span>
+            </div>
+            <div class="hero__stat">
+                <span class="hero__stat-number">850+</span>
+                <span class="hero__stat-label">Autores</span>
+            </div>
+            <div class="hero__stat">
+                <span class="hero__stat-number">40+</span>
+                <span class="hero__stat-label">Categorias</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Categorias em destaque -->
+<section class="home-section">
+    <div class="home-section__header">
+        <h2 class="home-section__title">Categorias em destaque</h2>
+        <a class="home-section__link" href="/categorias">Ver todas →</a>
+    </div>
+    <div class="categories-grid">
+        @foreach (var cat in FeaturedCategories)
+        {
+            <a class="category-chip" href="/catalogo?categoria=@cat.Slug">
+                <span class="category-chip__icon"><i class="@cat.Icon"></i></span>
+                <span class="category-chip__name">@cat.Name</span>
+                <span class="category-chip__count">@cat.Count títulos</span>
+            </a>
+        }
+    </div>
+</section>
+
+<!-- Lançamentos -->
+<section class="home-section">
+    <div class="home-section__header">
+        <h2 class="home-section__title">Lançamentos</h2>
+        <a class="home-section__link" href="/catalogo?ordem=lancamento">Ver todos →</a>
+    </div>
+    @if (IsLoading)
+    {
+        <div class="catalogo-loading"><div class="catalogo-loading__spinner"></div></div>
+    }
+    <div class="books-grid">
+        @foreach (var book in NewReleases)
+        {
+            <div class="book-card" @onclick="@(() => Navigation.NavigateTo($"/livro/{book.Id}"))">
+                <div class="book-card__cover">
+                    @if (!string.IsNullOrWhiteSpace(book.CoverImageUrl))
+                    {
+                        <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" />
+                    }
+                    else
+                    {
+                        <div class="book-card__cover-placeholder"><i class="fa-solid fa-book-open"></i></div>
+                    }
+                    <span class="book-card__badge">Novo</span>
+                </div>
+                <div class="book-card__body">
+                    <span class="book-card__category">@book.CategoryName</span>
+                    <h3 class="book-card__title">@book.Title</h3>
+                    <p class="book-card__author">@book.AuthorName</p>
+                    <div class="book-card__price">
+                        <span class="book-card__price-current">R$ @book.Price.ToString("N2")</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Banner promocional -->
+<section class="promo-banner">
+    <div class="promo-banner__content">
+        <p class="promo-banner__eyebrow">Oferta especial</p>
+        <h2 class="promo-banner__title">Semana dos clássicos</h2>
+        <p class="promo-banner__text">Até 40% de desconto nas obras mais importantes da literatura mundial.</p>
+        <AppButton Color="#c9a84c" TextColor="#0f172a" Size="lg" Width="200px" Height="52px"
+                   OnClickCallback="@(() => Navigation.NavigateTo("/catalogo?desconto=true"))">
+            Ver ofertas
+        </AppButton>
+    </div>
+    <div class="promo-banner__deco" aria-hidden="true">
+        <i class="fa-solid fa-book"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-book-open"></i>
+    </div>
+</section>
+
+<!-- Mais vendidos -->
+<section class="home-section">
+    <div class="home-section__header">
+        <h2 class="home-section__title">Mais vendidos</h2>
+        <a class="home-section__link" href="/catalogo?ordem=vendidos">Ver todos →</a>
+    </div>
+    <div class="books-grid">
+        @foreach (var book in BestSellers)
+        {
+            <div class="book-card" @onclick="@(() => Navigation.NavigateTo($"/livro/{book.Id}"))">
+                <div class="book-card__cover">
+                    @if (!string.IsNullOrWhiteSpace(book.CoverImageUrl))
+                    {
+                        <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" />
+                    }
+                    else
+                    {
+                        <div class="book-card__cover-placeholder"><i class="fa-solid fa-book-open"></i></div>
+                    }
+                </div>
+                <div class="book-card__body">
+                    <span class="book-card__category">@book.CategoryName</span>
+                    <h3 class="book-card__title">@book.Title</h3>
+                    <p class="book-card__author">@book.AuthorName</p>
+                    <div class="book-card__price">
+                        @if (book.OriginalPrice.HasValue)
+                        {
+                            <span class="book-card__price-original">R$ @book.OriginalPrice.Value.ToString("N2")</span>
+                            <span class="book-card__price-discount">
+                                -@(Math.Round((1 - book.Price / book.OriginalPrice.Value) * 100))%
+                            </span>
+                        }
+                        <span class="book-card__price-current">R$ @book.Price.ToString("N2")</span>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

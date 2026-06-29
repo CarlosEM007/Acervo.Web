@@ -1,0 +1,87 @@
+﻿@page "/registrar"
+@layout LoginLayout
+@inject NavigationManager Navigation
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Registrar-se — Acervo</PageTitle>
+
+<div class="register-page">
+
+    <!-- Lado esquerdo: imagem -->
+    <div class="register-cover">
+        <div class="register-cover__overlay"></div>
+    </div>
+
+    <!-- Lado direito: formulário -->
+    <div class="register-panel">
+
+        <header class="register-panel__header">
+            <span class="register-panel__logo">Acervo</span>
+        </header>
+
+        <main class="register-panel__body">
+            <h1 class="register-panel__title">Criar conta</h1>
+            <p class="register-panel__subtitle">Preencha os dados para se registrar</p>
+
+            <div class="register-panel__form">
+
+                <AppInput Label="Nome completo"
+                          Placeholder="Digite seu nome"
+                          Width="100%"
+                          @bind-Value="Nome" />
+
+                <AppInput Label="Usuário"
+                          Placeholder="Escolha um nome de usuário"
+                          Width="100%"
+                          @bind-Value="Usuario"
+                          ErrorMessage="@ErroUsuario" />
+
+                <AppInput Label="E-mail"
+                          Type="email"
+                          Placeholder="seu@email.com"
+                          Width="100%"
+                          @bind-Value="Email"
+                          ErrorMessage="@ErroEmail" />
+
+                <AppInput Label="Senha"
+                          Type="password"
+                          Placeholder="Mínimo 8 caracteres"
+                          Width="100%"
+                          @bind-Value="Senha"
+                          ErrorMessage="@ErroSenha" />
+
+                <AppInput Label="Confirmar senha"
+                          Type="password"
+                          Placeholder="Repita a senha"
+                          Width="100%"
+                          @bind-Value="ConfirmarSenha"
+                          ErrorMessage="@ErroConfirmarSenha" />
+
+                <div class="register-panel__actions">
+                    <AppButton OnClickCallback="Registrar"
+                               Type="button"
+                               Size="lg"
+                               FullWidth="true"
+                               Loading="@Carregando"
+                               LoadingText="Registrando..."
+                               Height="40px">
+                        Criar conta
+                    </AppButton>
+                </div>
+
+                <p class="register-panel__login-link">
+                    Já tem uma conta?
+                    <a @onclick="IrParaLogin" @onclick:preventDefault>Entrar</a>
+                </p>
+
+            </div>
+        </main>
+
+        <footer class="register-panel__footer">
+            <span>@@acervo</span>
+        </footer>
+
+    </div>
+</div>

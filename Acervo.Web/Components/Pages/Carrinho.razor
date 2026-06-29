@@ -1,0 +1,129 @@
+@page "/carrinho"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Carrinho — Acervo</PageTitle>
+
+<div class="cart-page">
+    <div class="cart-page__header">
+        <h1 class="cart-page__title">Carrinho</h1>
+        <span class="cart-page__count">@Items.Count @(Items.Count == 1 ? "item" : "itens")</span>
+    </div>
+
+    @if (!Items.Any())
+    {
+        <div class="cart-empty">
+            <span class="cart-empty__icon"><i class="fa-solid fa-cart-shopping"></i></span>
+            <h2 class="cart-empty__title">Seu carrinho está vazio</h2>
+            <p class="cart-empty__text">Adicione livros ao carrinho para continuar.</p>
+            <AppButton Color="#c9a84c" TextColor="#0f172a" Size="lg" Width="220px" Height="52px"
+                       OnClickCallback="@(() => Navigation.NavigateTo("/catalogo"))">
+                Explorar catálogo
+            </AppButton>
+        </div>
+    }
+    else
+    {
+        <div class="cart-body">
+            <!-- Lista de itens -->
+            <div class="cart-items">
+                @foreach (var item in Items)
+                {
+                    <div class="cart-item">
+                        <div class="cart-item__cover">
+                            @if (!string.IsNullOrWhiteSpace(item.CoverImageUrl))
+                            {
+                                <img src="@item.CoverImageUrl" alt="@item.Title" />
+                            }
+                            else
+                            {
+                                <div class="cart-item__cover-placeholder"><i class="fa-solid fa-book-open"></i></div>
+                            }
+                        </div>
+
+                        <div class="cart-item__info">
+                            <a class="cart-item__title" href="/livro/@item.BookId">@item.Title</a>
+                            <p class="cart-item__author">@item.AuthorName</p>
+                            <p class="cart-item__category">@item.CategoryName</p>
+                        </div>
+
+                        <div class="cart-item__qty">
+                            <button class="cart-item__qty-btn"
+                                    @onclick="@(() => DecreaseQty(item))"
+                                    disabled="@(item.Quantity <= 1)">−</button>
+                            <span class="cart-item__qty-val">@item.Quantity</span>
+                            <button class="cart-item__qty-btn"
+                                    @onclick="@(() => IncreaseQty(item))">+</button>
+                        </div>
+
+                        <div class="cart-item__price">
+                            <span class="cart-item__subtotal">R$ @item.SubTotal.ToString("N2")</span>
+                            <span class="cart-item__unit">R$ @item.UnitPrice.ToString("N2") / un</span>
+                        </div>
+
+                        <button class="cart-item__remove" @onclick="@(() => RemoveItem(item))" title="Remover">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                }
+
+                <div class="cart-items__footer">
+                    <button class="cart-items__clear" @onclick="ClearCart">
+                        Esvaziar carrinho
+                    </button>
+                </div>
+            </div>
+
+            <!-- Resumo -->
+            <aside class="cart-summary">
+                <h2 class="cart-summary__title">Resumo do pedido</h2>
+
+                <div class="cart-summary__lines">
+                    <div class="cart-summary__line">
+                        <span>Subtotal (@Items.Count @(Items.Count == 1 ? "item" : "itens"))</span>
+                        <span>R$ @Subtotal.ToString("N2")</span>
+                    </div>
+                    @if (Discount > 0)
+                    {
+                        <div class="cart-summary__line cart-summary__line--discount">
+                            <span>Desconto</span>
+                            <span>− R$ @Discount.ToString("N2")</span>
+                        </div>
+                    }
+                    <div class="cart-summary__line cart-summary__line--total">
+                        <span>Total</span>
+                        <span>R$ @Total.ToString("N2")</span>
+                    </div>
+                </div>
+
+                <!-- Cupom -->
+                <div class="cart-summary__coupon">
+                    <AppInput Label="Cupom de desconto" Placeholder="CÓDIGO" Width="100%"
+                              @bind-Value="CouponCode" />
+                    <AppButton Variant="outline" Size="sm" OnClickCallback="ApplyCoupon">
+                        Aplicar
+                    </AppButton>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(CouponMessage))
+                {
+                    <div class="cart-summary__coupon-msg @(CouponSuccess ? "success" : "error")">
+                        @CouponMessage
+                    </div>
+                }
+
+                <AppButton Color="#16a34a" TextColor="#fff" Size="lg" FullWidth="true" Height="52px"
+                           OnClickCallback="Checkout">
+                    Finalizar compra →
+                </AppButton>
+
+                <button class="cart-summary__continue"
+                        @onclick="@(() => Navigation.NavigateTo("/catalogo"))">
+                    ← Continuar comprando
+                </button>
+            </aside>
+        </div>
+    }
+</div>

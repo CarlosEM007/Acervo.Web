@@ -1,0 +1,63 @@
+@page "/autores"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Autores — Acervo</PageTitle>
+
+<div class="autores-page">
+    <div class="autores-header">
+        <h1 class="autores-header__title">Autores</h1>
+        <p class="autores-header__subtitle">Conheça os escritores do nosso acervo</p>
+        <div class="autores-header__search">
+            <AppInput Placeholder="Buscar autor…" Width="100%" @bind-Value="SearchQuery"
+                      @bind-Value:after="FilterAuthors" />
+        </div>
+    </div>
+
+    <!-- Filtro por letra -->
+    <div class="autores-alphabet">
+        <button class="autores-alphabet__btn @(SelectedLetter == null ? "active" : "")"
+                @onclick="@(() => SetLetter(null))">Todos</button>
+        @foreach (var letter in Alphabet)
+        {
+            var l = letter;
+            <button class="autores-alphabet__btn @(SelectedLetter == l ? "active" : "")"
+                    @onclick="@(() => SetLetter(l))">@l</button>
+        }
+    </div>
+
+    @if (IsLoading)
+    {
+        <div class="autores-empty">
+            <div class="catalogo-loading__spinner"></div>
+            <p>Carregando autores…</p>
+        </div>
+    }
+    else if (!FilteredAuthors.Any())
+    {
+        <div class="autores-empty">
+            <i class="fa-solid fa-book"></i>
+            <p>Nenhum autor encontrado.</p>
+        </div>
+    }
+    else
+    {
+        <div class="autores-grid">
+            @foreach (var author in FilteredAuthors)
+            {
+                <a class="author-card" href="/autores/@author.Id">
+                    <div class="author-card__avatar">
+                        <span class="author-card__initials">@GetInitials(author.Name)</span>
+                    </div>
+                    <div class="author-card__info">
+                        <h3 class="author-card__name">@author.Name</h3>
+                        <p class="author-card__bio">@TruncateBio(author.Biography)</p>
+                        <span class="author-card__books">@author.BookCount @(author.BookCount == 1 ? "livro" : "livros")</span>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>

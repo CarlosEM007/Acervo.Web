@@ -1,0 +1,155 @@
+@page "/livro/{Id:long}"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>@(Book?.Title ?? "Livro") — Acervo</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="detail-loading">
+        <div class="detail-loading__spinner"></div>
+        <p>Carregando livro…</p>
+    </div>
+}
+else if (Book is null)
+{
+    <div class="detail-not-found">
+        <i class="fa-solid fa-face-frown-open"></i>
+        <h2>Livro não encontrado</h2>
+        <p>O livro que você procura não está disponível.</p>
+        <AppButton Variant="outline" OnClickCallback="@(() => Navigation.NavigateTo("/catalogo"))">
+            Voltar ao catálogo
+        </AppButton>
+    </div>
+}
+else
+{
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+        <a class="breadcrumb__link" href="/home">Início</a>
+        <span class="breadcrumb__sep">›</span>
+        <a class="breadcrumb__link" href="/catalogo">Catálogo</a>
+        <span class="breadcrumb__sep">›</span>
+        <a class="breadcrumb__link" href="/catalogo?categoria=@Book.CategorySlug">@Book.CategoryName</a>
+        <span class="breadcrumb__sep">›</span>
+        <span class="breadcrumb__current">@Book.Title</span>
+    </nav>
+
+    <div class="detail-page">
+        <!-- Capa + info -->
+        <div class="detail-main">
+            <!-- Coluna esquerda: capa -->
+            <div class="detail-cover-col">
+                <div class="detail-cover">
+                    @if (!string.IsNullOrWhiteSpace(Book.CoverImageUrl))
+                    {
+                        <img src="@Book.CoverImageUrl" alt="Capa do livro @Book.Title" />
+                    }
+                    else
+                    {
+                        <div class="detail-cover__placeholder"><i class="fa-solid fa-book-open"></i></div>
+                    }
+                </div>
+
+                <div class="detail-cover-actions">
+                    <AppButton Color="#16a34a" TextColor="#fff" Size="lg" FullWidth="true"
+                               Height="52px" OnClickCallback="AddToCart">
+                        <i class="fa-solid fa-cart-shopping"></i> Comprar
+                    </AppButton>
+                    <AppButton Variant="outline" Size="lg" FullWidth="true" Height="52px"
+                               OnClickCallback="ToggleFavorite">
+                        @if (IsFavorite)
+                        {
+                            <i class="fa-solid fa-heart"></i><span> Nos favoritos</span>
+                        }
+                        else
+                        {
+                            <i class="fa-regular fa-heart"></i><span> Adicionar aos favoritos</span>
+                        }
+                    </AppButton>
+                </div>
+            </div>
+
+            <!-- Coluna direita: detalhes -->
+            <div class="detail-info">
+                <span class="detail-category">@Book.CategoryName</span>
+                <h1 class="detail-title">@Book.Title</h1>
+                <p class="detail-author">por <a href="/autores/@Book.AuthorId" class="detail-author-link">@Book.AuthorName</a></p>
+
+                <!-- Preço -->
+                <div class="detail-price-block">
+                    @if (Book.OriginalPrice.HasValue)
+                    {
+                        <div class="detail-price-row">
+                            <span class="detail-price-original">R$ @Book.OriginalPrice.Value.ToString("N2")</span>
+                            <span class="detail-discount">
+                                -@(Math.Round((1 - Book.Price / Book.OriginalPrice.Value) * 100))%
+                            </span>
+                        </div>
+                    }
+                    <span class="detail-price">R$ @Book.Price.ToString("N2")</span>
+                    <span class="detail-price-note">Ativação por chave digital</span>
+                </div>
+
+                <!-- Mensagem de feedback -->
+                @if (!string.IsNullOrWhiteSpace(FeedbackMessage))
+                {
+                    <div class="detail-feedback @(FeedbackSuccess ? "detail-feedback--success" : "detail-feedback--error")">
+                        @FeedbackMessage
+                    </div>
+                }
+
+                <!-- Plataforma -->
+                <div class="detail-platform">
+                    <span class="detail-platform__label">Formato</span>
+                    <span class="detail-platform__value"><i class="fa-solid fa-mobile-screen"></i> E-book Digital</span>
+                </div>
+
+                <!-- Separador -->
+                <hr class="detail-divider" />
+
+                <!-- Descrição -->
+                <div class="detail-desc">
+                    <h2 class="detail-section-title">Sobre o livro</h2>
+                    <p class="detail-desc-text @(DescExpanded ? "" : "detail-desc-text--clamped")">
+                        @Book.Description
+                    </p>
+                    <button class="detail-expand-btn" @onclick="@(() => DescExpanded = !DescExpanded)">
+                        @(DescExpanded ? "Ver menos ↑" : "Ver mais ↓")
+                    </button>
+                </div>
+
+                <hr class="detail-divider" />
+
+                <!-- Metadados -->
+                <div class="detail-meta">
+                    <h2 class="detail-section-title">Informações</h2>
+                    <div class="detail-meta-grid">
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-key">Autor</span>
+                            <span class="detail-meta-val">@Book.AuthorName</span>
+                        </div>
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-key">Editora</span>
+                            <span class="detail-meta-val">@Book.PublisherName</span>
+                        </div>
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-key">Lançamento</span>
+                            <span class="detail-meta-val">@Book.Release.ToString("dd/MM/yyyy")</span>
+                        </div>
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-key">Páginas</span>
+                            <span class="detail-meta-val">@Book.PagesNumber</span>
+                        </div>
+                        <div class="detail-meta-item">
+                            <span class="detail-meta-key">Categoria</span>
+                            <span class="detail-meta-val">@Book.CategoryName</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

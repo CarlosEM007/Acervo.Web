@@ -1,0 +1,80 @@
+@page "/sobre"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Sobre — Acervo</PageTitle>
+
+<div class="sobre-page">
+    <!-- Hero -->
+    <section class="sobre-hero">
+        <div class="sobre-hero__content">
+            <p class="sobre-hero__eyebrow">Nossa história</p>
+            <h1 class="sobre-hero__title">
+                Conectando leitores<br />
+                <span class="sobre-hero__accent">a grandes histórias</span>
+            </h1>
+            <p class="sobre-hero__text">
+                O Acervo nasceu da crença de que bons livros mudam perspectivas.
+                Nossa missão é tornar a leitura acessível, prazerosa e conveniente
+                para todos os que amam o poder das palavras.
+            </p>
+        </div>
+        <div class="sobre-hero__numbers">
+            @foreach (var stat in Stats)
+            {
+                <div class="sobre-stat">
+                    <span class="sobre-stat__number">@stat.Value</span>
+                    <span class="sobre-stat__label">@stat.Label</span>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Missão / Visão / Valores -->
+    <section class="sobre-pillars">
+        <h2 class="sobre-section-title">O que nos move</h2>
+        <div class="sobre-pillars__grid">
+            @foreach (var pillar in Pillars)
+            {
+                <div class="pillar-card">
+                    <span class="pillar-card__icon"><i class="@pillar.Icon"></i></span>
+                    <h3 class="pillar-card__title">@pillar.Title</h3>
+                    <p class="pillar-card__text">@pillar.Text</p>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="sobre-timeline">
+        <h2 class="sobre-section-title">Nossa trajetória</h2>
+        <div class="timeline">
+            @foreach (var ev in Timeline)
+            {
+                <div class="timeline-item">
+                    <div class="timeline-item__year">@ev.Year</div>
+                    <div class="timeline-item__connector">
+                        <div class="timeline-item__dot"></div>
+                        <div class="timeline-item__line"></div>
+                    </div>
+                    <div class="timeline-item__content">
+                        <h3 class="timeline-item__title">@ev.Title</h3>
+                        <p class="timeline-item__desc">@ev.Description</p>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="sobre-cta">
+        <h2 class="sobre-cta__title">Pronto para começar a leitura?</h2>
+        <p class="sobre-cta__text">Explore nosso catálogo com milhares de títulos esperando por você.</p>
+        <AppButton Color="#c9a84c" TextColor="#0f172a" Size="lg" Width="240px" Height="56px"
+                   OnClickCallback="@(() => Navigation.NavigateTo("/catalogo"))">
+            Explorar catálogo →
+        </AppButton>
+    </section>
+</div>

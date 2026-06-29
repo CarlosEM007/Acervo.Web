@@ -1,0 +1,119 @@
+﻿/* ── Variáveis ───────────────────────────────────────────────────── */
+:root {
+    --input-height: 48px;
+    --input-font-size: 0.9375rem;
+    --input-padding-x: 0.25rem;
+    --input-label: #6b7280;
+    --input-label-focus: #111827;
+    --input-text: #111827;
+    --input-placeholder: rgba(107, 114, 128, 0.45);
+    --input-line: #e5e7eb;
+    --input-line-focus: #111827;
+    --input-line-error: #ef4444;
+    --input-bg: transparent;
+    --input-bg-focus: #f7f7f8;
+    --input-helper: #9ca3af;
+    --input-error-text: #ef4444;
+    --input-transition: background-color 0.25s ease, border-color 0.2s ease;
+}
+
+/* ── Wrapper ─────────────────────────────────────────────────────── */
+.input-wrapper {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+/* ── Label ───────────────────────────────────────────────────────── */
+.input-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--input-label);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    user-select: none;
+    transition: color 0.2s ease;
+}
+
+/* ── Container ───────────────────────────────────────────────────── */
+.input-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    height: var(--input-height);
+    padding: 0 var(--input-padding-x);
+    background: var(--input-bg);
+    border: none;
+    border-bottom: 1.5px solid var(--input-line);
+    border-radius: 4px 4px 0 0;
+    transition: var(--input-transition);
+    box-sizing: border-box;
+}
+
+    .input-container:focus-within {
+        background: var(--input-bg-focus);
+        border-bottom-color: var(--input-line-focus);
+    }
+
+.input-wrapper:focus-within .input-label {
+    color: var(--input-label-focus);
+}
+
+.input-container.has-error {
+    border-bottom-color: var(--input-line-error);
+}
+
+.input-container.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ── Campo ───────────────────────────────────────────────────────── */
+.input-field {
+    flex: 1;
+    height: 100%;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-size: var(--input-font-size);
+    color: var(--input-text);
+    font-family: inherit;
+    padding: 0;
+    min-width: 0;
+}
+
+    .input-field::placeholder {
+        color: var(--input-placeholder);
+        opacity: 1;
+    }
+
+    .input-field:disabled {
+        cursor: not-allowed;
+    }
+
+/* ── Ícones ──────────────────────────────────────────────────────── */
+.input-icon {
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    color: var(--input-placeholder);
+    font-size: 1rem;
+    line-height: 1;
+}
+
+/* ── Textos auxiliares ───────────────────────────────────────────── */
+.input-helper,
+.input-error {
+    font-size: 0.72rem;
+    line-height: 1.4;
+    padding-left: 2px;
+}
+
+.input-helper {
+    color: var(--input-helper);
+}
+
+.input-error {
+    color: var(--input-error-text);
+}

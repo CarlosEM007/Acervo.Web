@@ -1,0 +1,73 @@
+@page "/busca"
+@layout MainLayout
+@rendermode InteractiveServer
+@using Acervo.Web.Components.Layout
+@using Acervo.Web.Components.Shared
+
+<PageTitle>Busca: @Query — Acervo</PageTitle>
+
+<div class="search-page">
+    <div class="search-header">
+        <AppInput Placeholder="Buscar livros, autores, categorias…"
+                  Width="100%"
+                  @bind-Value="Query"
+                  @bind-Value:after="RunSearch" />
+    </div>
+
+    @if (!string.IsNullOrWhiteSpace(Query))
+    {
+        <div class="search-meta">
+            @if (IsLoading)
+            {
+                <p class="search-meta__text">Buscando…</p>
+            }
+            else
+            {
+                <p class="search-meta__text">
+                    <strong>@Results.Count</strong> resultado@(Results.Count != 1 ? "s" : "") para
+                    "<strong>@Query</strong>"
+                </p>
+            }
+        </div>
+    }
+
+    @if (!IsLoading && !Results.Any() && !string.IsNullOrWhiteSpace(Query))
+    {
+        <div class="search-empty">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <h2>Nenhum resultado encontrado</h2>
+            <p>Tente outros termos ou explore o catálogo.</p>
+            <AppButton Variant="outline" OnClickCallback="@(() => Navigation.NavigateTo("/catalogo"))">
+                Ver catálogo completo
+            </AppButton>
+        </div>
+    }
+    else if (Results.Any())
+    {
+        <div class="books-grid">
+            @foreach (var book in Results)
+            {
+                <div class="book-card" @onclick="@(() => Navigation.NavigateTo($"/livro/{book.Id}"))">
+                    <div class="book-card__cover">
+                        <div class="book-card__cover-placeholder"><i class="fa-solid fa-book-open"></i></div>
+                    </div>
+                    <div class="book-card__body">
+                        <span class="book-card__category">@book.CategoryName</span>
+                        <h3 class="book-card__title">@book.Title</h3>
+                        <p class="book-card__author">@book.AuthorName</p>
+                        <div class="book-card__price">
+                            <span class="book-card__price-current">R$ @book.Price.ToString("N2")</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else if (string.IsNullOrWhiteSpace(Query))
+    {
+        <div class="search-hint">
+            <span class="search-hint__icon"><i class="fa-solid fa-book-open-reader"></i></span>
+            <p>Digite acima para buscar no acervo.</p>
+        </div>
+    }
+</div>
