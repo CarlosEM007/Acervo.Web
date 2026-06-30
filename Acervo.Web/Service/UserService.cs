@@ -8,16 +8,24 @@ namespace Acervo.Web.Service
     {
         public async Task<bool> LoginUser(string email, string password)
         {
-            var login = new LoginDto { Email = email, PasswordHash = password };
+            try
+            {
+                var login = new LoginDto { Email = email, PasswordHash = password };
 
-            var response = await httpClient.PostAsJsonAsync(AuthEndpoints.Login(), login);
-            if (!response.IsSuccessStatusCode) return false;
+                var response = await httpClient.PostAsJsonAsync(AuthEndpoints.Login(), login);
+                if (!response.IsSuccessStatusCode) return false;
 
-            var result = await response.Content.ReadFromJsonAsync<TokenDto>();
-            if (result?.Token == null) return false;
+                var result = await response.Content.ReadFromJsonAsync<TokenDto>();
+                if (result?.Token == null) return false;
 
-            session.SetToken(result.Token);
-            return true;
+                session.SetToken(result.Token);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[UserService] LoginUser error: {ex.Message}");
+                return false;
+            }
         }
     }
 }

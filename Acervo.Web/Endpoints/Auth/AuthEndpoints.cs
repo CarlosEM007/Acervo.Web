@@ -2,6 +2,6 @@
 {
     public static class AuthEndpoints
     {
-        public static string Login() => "auth/login";
+        public static string Login() => "Auth/login";
     }
 }

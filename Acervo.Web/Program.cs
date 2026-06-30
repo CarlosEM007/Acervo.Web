@@ -8,14 +8,32 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddSingleton<SessionService>();
 
-var apiBase = new Uri("https://localhost:7001/api/");
+var apiBase = new Uri("https://localhost:7104/api/");
 
-builder.Services.AddHttpClient<UserService>(c       => c.BaseAddress = apiBase);
-builder.Services.AddHttpClient<BookService>(c       => c.BaseAddress = apiBase);
-builder.Services.AddHttpClient<AuthorService>(c     => c.BaseAddress = apiBase);
-builder.Services.AddHttpClient<CategoryService>(c   => c.BaseAddress = apiBase);
-builder.Services.AddHttpClient<PublisherService>(c  => c.BaseAddress = apiBase);
-builder.Services.AddHttpClient<StockItemService>(c  => c.BaseAddress = apiBase);
+void ConfigureClient(HttpClient c) => c.BaseAddress = apiBase;
+
+if (builder.Environment.IsDevelopment())
+{
+    var handler = new HttpClientHandler
+    {
+        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+    };
+    builder.Services.AddHttpClient<UserService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
+    builder.Services.AddHttpClient<BookService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
+    builder.Services.AddHttpClient<AuthorService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
+    builder.Services.AddHttpClient<CategoryService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
+    builder.Services.AddHttpClient<PublisherService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
+    builder.Services.AddHttpClient<StockItemService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
+}
+else
+{
+    builder.Services.AddHttpClient<UserService>(ConfigureClient);
+    builder.Services.AddHttpClient<BookService>(ConfigureClient);
+    builder.Services.AddHttpClient<AuthorService>(ConfigureClient);
+    builder.Services.AddHttpClient<CategoryService>(ConfigureClient);
+    builder.Services.AddHttpClient<PublisherService>(ConfigureClient);
+    builder.Services.AddHttpClient<StockItemService>(ConfigureClient);
+}
 
 var app = builder.Build();
 
