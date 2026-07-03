@@ -11,11 +11,15 @@ builder.Services.AddSingleton<SessionService>();
 var apiBase = new Uri("https://localhost:7104/api/");
 var isDevelopment = builder.Environment.IsDevelopment();
 
-// Registra um HttpClient tipado apontando para a API. Em desenvolvimento,
-// ignora a validação do certificado self-signed do Kestrel/localhost.
+// Handler que injeta o JWT (Authorization: Bearer) em cada requisição à API.
+builder.Services.AddTransient<AuthTokenHandler>();
+
+// Registra um HttpClient tipado apontando para a API. Anexa o token JWT e, em
+// desenvolvimento, ignora a validação do certificado self-signed do Kestrel/localhost.
 void AddApiClient<TService>() where TService : class
 {
-    var clientBuilder = builder.Services.AddHttpClient<TService>(c => c.BaseAddress = apiBase);
+    var clientBuilder = builder.Services.AddHttpClient<TService>(c => c.BaseAddress = apiBase)
+        .AddHttpMessageHandler<AuthTokenHandler>();
 
     if (isDevelopment)
     {
