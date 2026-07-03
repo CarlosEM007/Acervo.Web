@@ -27,16 +27,21 @@
 
             <div class="register-panel__form">
 
+                @if (!string.IsNullOrEmpty(ErroGeral))
+                {
+                    <div class="register-panel__error">@ErroGeral</div>
+                }
+
                 <AppInput Label="Nome completo"
                           Placeholder="Digite seu nome"
                           Width="100%"
-                          @bind-Value="Nome" />
+                          @bind-Value="Nome"
+                          ErrorMessage="@ErroNome" />
 
                 <AppInput Label="Usuário"
                           Placeholder="Escolha um nome de usuário"
                           Width="100%"
-                          @bind-Value="Usuario"
-                          ErrorMessage="@ErroUsuario" />
+                          @bind-Value="Usuario" />
 
                 <AppInput Label="E-mail"
                           Type="email"

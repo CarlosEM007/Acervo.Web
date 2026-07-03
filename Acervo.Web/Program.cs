@@ -9,31 +9,40 @@ builder.Services.AddRazorComponents()
 builder.Services.AddSingleton<SessionService>();
 
 var apiBase = new Uri("https://localhost:7104/api/");
+var isDevelopment = builder.Environment.IsDevelopment();
 
-void ConfigureClient(HttpClient c) => c.BaseAddress = apiBase;
-
-if (builder.Environment.IsDevelopment())
+// Registra um HttpClient tipado apontando para a API. Em desenvolvimento,
+// ignora a validação do certificado self-signed do Kestrel/localhost.
+void AddApiClient<TService>() where TService : class
 {
-    var handler = new HttpClientHandler
+    var clientBuilder = builder.Services.AddHttpClient<TService>(c => c.BaseAddress = apiBase);
+
+    if (isDevelopment)
     {
-        ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
-    };
-    builder.Services.AddHttpClient<UserService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
-    builder.Services.AddHttpClient<BookService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
-    builder.Services.AddHttpClient<AuthorService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
-    builder.Services.AddHttpClient<CategoryService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
-    builder.Services.AddHttpClient<PublisherService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
-    builder.Services.AddHttpClient<StockItemService>(ConfigureClient).ConfigurePrimaryHttpMessageHandler(() => handler);
+        clientBuilder.ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+        {
+            ServerCertificateCustomValidationCallback =
+                HttpClientHandler.DangerousAcceptAnyServerCertificateValidator
+        });
+    }
 }
-else
-{
-    builder.Services.AddHttpClient<UserService>(ConfigureClient);
-    builder.Services.AddHttpClient<BookService>(ConfigureClient);
-    builder.Services.AddHttpClient<AuthorService>(ConfigureClient);
-    builder.Services.AddHttpClient<CategoryService>(ConfigureClient);
-    builder.Services.AddHttpClient<PublisherService>(ConfigureClient);
-    builder.Services.AddHttpClient<StockItemService>(ConfigureClient);
-}
+
+AddApiClient<UserService>();
+AddApiClient<BookService>();
+AddApiClient<AuthorService>();
+AddApiClient<CategoryService>();
+AddApiClient<PublisherService>();
+AddApiClient<SellerService>();
+AddApiClient<CartService>();
+AddApiClient<CartItemService>();
+AddApiClient<FavoritesService>();
+AddApiClient<FavoritesItemService>();
+AddApiClient<LibraryService>();
+AddApiClient<LibraryItemService>();
+AddApiClient<SaleService>();
+AddApiClient<SaleItemService>();
+AddApiClient<StockService>();
+AddApiClient<StockItemService>();
 
 var app = builder.Build();
 
