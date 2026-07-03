@@ -12,18 +12,29 @@
         <p class="cats-header__subtitle">Explore por gênero e encontre sua próxima leitura</p>
     </div>
 
-    <div class="cats-grid">
-        @foreach (var cat in Categories)
-        {
-            <a class="cat-card" href="/catalogo?categoria=@cat.Slug">
-                <div class="cat-card__icon"><i class="@cat.Icon"></i></div>
-                <div class="cat-card__body">
-                    <h2 class="cat-card__name">@cat.Name</h2>
-                    <p class="cat-card__desc">@cat.Description</p>
-                    <span class="cat-card__count">@cat.Count títulos</span>
-                </div>
-                <span class="cat-card__arrow">→</span>
-            </a>
-        }
-    </div>
+    @if (IsLoading)
+    {
+        <p class="cats-loading">Carregando categorias…</p>
+    }
+    else if (Categories.Count == 0)
+    {
+        <p class="cats-empty">Nenhuma categoria disponível no momento.</p>
+    }
+    else
+    {
+        <div class="cats-grid">
+            @foreach (var cat in Categories)
+            {
+                <a class="cat-card" href="/catalogo?categoria=@cat.Slug">
+                    <div class="cat-card__icon"><i class="@cat.Icon"></i></div>
+                    <div class="cat-card__body">
+                        <h2 class="cat-card__name">@cat.Name</h2>
+                        <p class="cat-card__desc">@cat.Description</p>
+                        <span class="cat-card__count">@cat.Count títulos</span>
+                    </div>
+                    <span class="cat-card__arrow">→</span>
+                </a>
+            }
+        </div>
+    }
 </div>
