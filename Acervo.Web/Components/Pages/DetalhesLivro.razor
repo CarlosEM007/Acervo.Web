@@ -1,6 +1,5 @@
 @page "/livro/{Id:long}"
 @layout MainLayout
-@rendermode InteractiveServer
 @using Acervo.Web.Components.Layout
 @using Acervo.Web.Components.Shared
 
@@ -92,14 +91,6 @@ else
                     <span class="detail-price">R$ @Book.Price.ToString("N2")</span>
                     <span class="detail-price-note">Ativação por chave digital</span>
                 </div>
-
-                <!-- Mensagem de feedback -->
-                @if (!string.IsNullOrWhiteSpace(FeedbackMessage))
-                {
-                    <div class="detail-feedback @(FeedbackSuccess ? "detail-feedback--success" : "detail-feedback--error")">
-                        @FeedbackMessage
-                    </div>
-                }
 
                 <!-- Plataforma -->
                 <div class="detail-platform">

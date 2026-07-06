@@ -8,6 +8,7 @@ namespace Acervo.Web.Components.Pages
         [Inject] private NavigationManager Navigation { get; set; } = default!;
         [Inject] private AuthorService      AuthorSvc { get; set; } = default!;
         [Inject] private BookService        BookSvc   { get; set; } = default!;
+        [Inject] private ToastService       Toast     { get; set; } = default!;
 
         private record AuthorVm(long Id, string Name, string? Biography, int BookCount);
 
@@ -41,7 +42,10 @@ namespace Acervo.Web.Components.Pages
                     .OrderBy(a => a.Name)
                     .ToList();
             }
-            catch { /* API offline */ }
+            catch
+            {
+                Toast.ShowError("Não foi possível carregar os autores.");
+            }
             finally
             {
                 IsLoading = false;

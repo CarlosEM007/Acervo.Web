@@ -13,13 +13,14 @@ namespace Acervo.Web.Components.Pages
         [Inject] private CategoryService    CatSvc       { get; set; } = default!;
         [Inject] private PublisherService   PublisherSvc { get; set; } = default!;
         [Inject] private StockItemService   StockSvc     { get; set; } = default!;
+        [Inject] private CartManager        Cart         { get; set; } = default!;
+        [Inject] private FavoritesManager   Favorites    { get; set; } = default!;
+        [Inject] private ToastService       Toast        { get; set; } = default!;
 
         // ── Estado ─────────────────────────────────────────────────
-        private bool    IsLoading      { get; set; } = true;
-        private bool    IsFavorite     { get; set; } = false;
-        private bool    DescExpanded   { get; set; } = false;
-        private string? FeedbackMessage { get; set; }
-        private bool    FeedbackSuccess { get; set; }
+        private bool IsLoading    { get; set; } = true;
+        private bool IsFavorite   { get; set; } = false;
+        private bool DescExpanded { get; set; } = false;
 
         private record BookDetailVm(
             long     Id,
@@ -72,14 +73,7 @@ namespace Acervo.Web.Components.Pages
                     .DefaultIfEmpty(0m)
                     .Min();
 
-                // Slug simples: sem acentos/espaços
-                var slug = category?.Description
-                    .ToLowerInvariant()
-                    .Replace(" ", "-")
-                    .Replace("ã", "a").Replace("á", "a").Replace("â", "a")
-                    .Replace("ç", "c").Replace("é", "e").Replace("ê", "e")
-                    .Replace("í", "i").Replace("ó", "o").Replace("ô", "o")
-                    .Replace("ú", "u") ?? "geral";
+                var slug = Slugify(category?.Description ?? "geral");
 
                 Book = new(
                     bookDto.Id,
@@ -95,43 +89,78 @@ namespace Acervo.Web.Components.Pages
                     publisherName,
                     price,
                     null);
+
+                // Reflete o estado real de favorito do usuário logado.
+                var favItem = await Favorites.FindItem(bookDto.Id);
+                IsFavorite = favItem is not null;
             }
-            catch { /* API offline — Book fica null → template mostra "não encontrado" */ }
+            catch
+            {
+                // API offline — Book fica null → template mostra "não encontrado"
+                Toast.ShowError("Não foi possível carregar o livro.");
+            }
         }
 
         private async Task AddToCart()
         {
             if (Book is null) return;
 
-            // TODO: integrar com CartService quando houver contexto de usuário
-            await Task.Delay(200);
-
-            FeedbackMessage = $"«{Book.Title}» adicionado ao carrinho!";
-            FeedbackSuccess = true;
-            StateHasChanged();
-
-            await Task.Delay(3000);
-            FeedbackMessage = null;
-            StateHasChanged();
+            try
+            {
+                if (await Cart.AddBook(Book.Id, Book.Price))
+                    Toast.ShowSuccess($"«{Book.Title}» adicionado ao carrinho!");
+                else
+                    Toast.ShowError("Não foi possível adicionar ao carrinho.");
+            }
+            catch
+            {
+                Toast.ShowError("Erro ao comunicar com o servidor.");
+            }
         }
 
         private async Task ToggleFavorite()
         {
             if (Book is null) return;
 
-            // TODO: integrar com FavoritesService quando houver contexto de usuário
-            await Task.Delay(150);
-
-            IsFavorite      = !IsFavorite;
-            FeedbackMessage = IsFavorite
-                ? $"«{Book.Title}» adicionado aos favoritos!"
-                : $"«{Book.Title}» removido dos favoritos.";
-            FeedbackSuccess = IsFavorite;
-            StateHasChanged();
-
-            await Task.Delay(3000);
-            FeedbackMessage = null;
-            StateHasChanged();
+            try
+            {
+                if (IsFavorite)
+                {
+                    if (await Favorites.Remove(Book.Id))
+                    {
+                        IsFavorite = false;
+                        Toast.ShowSuccess($"«{Book.Title}» removido dos favoritos.");
+                    }
+                    else
+                    {
+                        Toast.ShowError("Não foi possível remover dos favoritos.");
+                    }
+                }
+                else
+                {
+                    if (await Favorites.Add(Book.Id))
+                    {
+                        IsFavorite = true;
+                        Toast.ShowSuccess($"«{Book.Title}» adicionado aos favoritos!");
+                    }
+                    else
+                    {
+                        Toast.ShowError("Não foi possível adicionar aos favoritos.");
+                    }
+                }
+            }
+            catch
+            {
+                Toast.ShowError("Erro ao comunicar com o servidor.");
+            }
         }
+
+        private static string Slugify(string value) =>
+            value.ToLowerInvariant()
+                 .Replace(" ", "-")
+                 .Replace("ã", "a").Replace("á", "a").Replace("â", "a")
+                 .Replace("ç", "c").Replace("é", "e").Replace("ê", "e")
+                 .Replace("í", "i").Replace("ó", "o").Replace("ô", "o")
+                 .Replace("ú", "u");
     }
 }

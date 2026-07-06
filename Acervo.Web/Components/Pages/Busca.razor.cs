@@ -11,6 +11,7 @@ namespace Acervo.Web.Components.Pages
         [Inject] private AuthorService      AuthorSvc { get; set; } = default!;
         [Inject] private CategoryService    CatSvc    { get; set; } = default!;
         [Inject] private StockItemService   StockSvc  { get; set; } = default!;
+        [Inject] private ToastService       Toast     { get; set; } = default!;
 
         private record BookVm(long Id, string Title, string AuthorName, string CategoryName, decimal Price);
 
@@ -51,7 +52,10 @@ namespace Acervo.Web.Components.Pages
                         prices.GetValueOrDefault(b.Id, 0m)))
                     .ToList();
             }
-            catch { /* API offline */ }
+            catch
+            {
+                Toast.ShowError("Não foi possível realizar a busca.");
+            }
             finally
             {
                 IsLoading = false;

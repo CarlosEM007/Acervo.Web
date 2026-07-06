@@ -7,6 +7,9 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 
 builder.Services.AddSingleton<SessionService>();
+builder.Services.AddScoped<ToastService>();
+builder.Services.AddScoped<CartManager>();
+builder.Services.AddScoped<FavoritesManager>();
 
 var apiBase = new Uri("https://localhost:7104/api/");
 var isDevelopment = builder.Environment.IsDevelopment();

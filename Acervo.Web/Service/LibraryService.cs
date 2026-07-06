@@ -9,6 +9,9 @@ namespace Acervo.Web.Service
         public async Task<List<LibraryDto>> GetAll() =>
             await http.GetFromJsonAsync<List<LibraryDto>>(LibraryEndpoints.GetAll()) ?? [];
 
+        public async Task<LibraryDto?> GetByUser(long userId) =>
+            (await GetAll()).FirstOrDefault(l => l.UserId == userId);
+
         public async Task<LibraryDto?> GetById(long id)
         {
             var response = await http.GetAsync(LibraryEndpoints.GetById(id));

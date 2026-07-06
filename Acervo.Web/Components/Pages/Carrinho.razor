@@ -1,6 +1,5 @@
 @page "/carrinho"
 @layout MainLayout
-@rendermode InteractiveServer
 @using Acervo.Web.Components.Layout
 @using Acervo.Web.Components.Shared
 
@@ -12,7 +11,11 @@
         <span class="cart-page__count">@Items.Count @(Items.Count == 1 ? "item" : "itens")</span>
     </div>
 
-    @if (!Items.Any())
+    @if (IsLoading)
+    {
+        <p class="cart-loading">Carregando carrinho…</p>
+    }
+    else if (!Items.Any())
     {
         <div class="cart-empty">
             <span class="cart-empty__icon"><i class="fa-solid fa-cart-shopping"></i></span>
@@ -85,34 +88,11 @@
                         <span>Subtotal (@Items.Count @(Items.Count == 1 ? "item" : "itens"))</span>
                         <span>R$ @Subtotal.ToString("N2")</span>
                     </div>
-                    @if (Discount > 0)
-                    {
-                        <div class="cart-summary__line cart-summary__line--discount">
-                            <span>Desconto</span>
-                            <span>− R$ @Discount.ToString("N2")</span>
-                        </div>
-                    }
                     <div class="cart-summary__line cart-summary__line--total">
                         <span>Total</span>
                         <span>R$ @Total.ToString("N2")</span>
                     </div>
                 </div>
-
-                <!-- Cupom -->
-                <div class="cart-summary__coupon">
-                    <AppInput Label="Cupom de desconto" Placeholder="CÓDIGO" Width="100%"
-                              @bind-Value="CouponCode" />
-                    <AppButton Variant="outline" Size="sm" OnClickCallback="ApplyCoupon">
-                        Aplicar
-                    </AppButton>
-                </div>
-
-                @if (!string.IsNullOrWhiteSpace(CouponMessage))
-                {
-                    <div class="cart-summary__coupon-msg @(CouponSuccess ? "success" : "error")">
-                        @CouponMessage
-                    </div>
-                }
 
                 <AppButton Color="#16a34a" TextColor="#fff" Size="lg" FullWidth="true" Height="52px"
                            OnClickCallback="Checkout">
