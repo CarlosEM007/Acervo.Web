@@ -9,6 +9,9 @@ namespace Acervo.Web.Service
         public async Task<List<CartDto>> GetAll() =>
             await http.GetFromJsonAsync<List<CartDto>>(CartEndpoints.GetAll()) ?? [];
 
+        public async Task<CartDto?> GetByUser(long userId) =>
+            (await GetAll()).FirstOrDefault(c => c.UserId == userId);
+
         public async Task<CartDto?> GetById(long id)
         {
             var response = await http.GetAsync(CartEndpoints.GetById(id));

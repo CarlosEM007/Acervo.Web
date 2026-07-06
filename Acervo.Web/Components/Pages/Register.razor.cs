@@ -6,7 +6,8 @@ namespace Acervo.Web.Components.Pages;
 
 public partial class Register
 {
-    [Inject] private UserService _service { get; set; } = default!;
+    [Inject] private UserService  _service { get; set; } = default!;
+    [Inject] private ToastService Toast    { get; set; } = default!;
 
     private string? Nome { get; set; }
     private string? Usuario { get; set; }
@@ -36,14 +37,21 @@ public partial class Register
             var ok  = await _service.Create(dto);
 
             if (ok)
+            {
+                Toast.ShowSuccess("Conta criada com sucesso! Faça login.");
                 Navigation.NavigateTo("/");
+            }
             else
+            {
                 ErroGeral = "Não foi possível concluir o cadastro. Verifique os dados e tente novamente.";
+                Toast.ShowError(ErroGeral);
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"[Register] Registrar error: {ex.Message}");
             ErroGeral = "Não foi possível conectar ao servidor. Tente novamente mais tarde.";
+            Toast.ShowError(ErroGeral);
         }
         finally
         {

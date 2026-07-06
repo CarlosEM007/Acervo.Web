@@ -1,6 +1,5 @@
 @page "/busca"
 @layout MainLayout
-@rendermode InteractiveServer
 @using Acervo.Web.Components.Layout
 @using Acervo.Web.Components.Shared
 
@@ -49,7 +48,14 @@
             {
                 <div class="book-card" @onclick="@(() => Navigation.NavigateTo($"/livro/{book.Id}"))">
                     <div class="book-card__cover">
-                        <div class="book-card__cover-placeholder"><i class="fa-solid fa-book-open"></i></div>
+                        @if (!string.IsNullOrWhiteSpace(book.CoverImageUrl))
+                        {
+                            <img src="@book.CoverImageUrl" alt="@book.Title" loading="lazy" />
+                        }
+                        else
+                        {
+                            <div class="book-card__cover-placeholder"><i class="fa-solid fa-book-open"></i></div>
+                        }
                     </div>
                     <div class="book-card__body">
                         <span class="book-card__category">@book.CategoryName</span>

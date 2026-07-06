@@ -11,8 +11,10 @@ namespace Acervo.Web.Components.Pages
         [Inject] private AuthorService      AuthorSvc { get; set; } = default!;
         [Inject] private CategoryService    CatSvc    { get; set; } = default!;
         [Inject] private StockItemService   StockSvc  { get; set; } = default!;
+        [Inject] private ToastService       Toast     { get; set; } = default!;
 
-        private record BookVm(long Id, string Title, string AuthorName, string CategoryName, decimal Price);
+        private record BookVm(long Id, string Title, string AuthorName, string CategoryName,
+            decimal Price, string? CoverImageUrl);
 
         private string       Query    { get; set; } = string.Empty;
         private bool         IsLoading { get; set; } = true;
@@ -48,10 +50,14 @@ namespace Acervo.Web.Components.Pages
                         b.Title,
                         authors.GetValueOrDefault(b.AuthorId, "—"),
                         categories.GetValueOrDefault(b.CategoryId, "—"),
-                        prices.GetValueOrDefault(b.Id, 0m)))
+                        prices.GetValueOrDefault(b.Id, 0m),
+                        string.IsNullOrEmpty(b.CoverImageUrl) ? null : b.CoverImageUrl))
                     .ToList();
             }
-            catch { /* API offline */ }
+            catch
+            {
+                Toast.ShowError("Não foi possível realizar a busca.");
+            }
             finally
             {
                 IsLoading = false;

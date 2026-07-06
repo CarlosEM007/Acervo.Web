@@ -1,6 +1,5 @@
 @page "/favoritos"
 @layout MainLayout
-@rendermode InteractiveServer
 @using Acervo.Web.Components.Layout
 @using Acervo.Web.Components.Shared
 
@@ -12,7 +11,11 @@
         <span class="favs-page__count">@Items.Count @(Items.Count == 1 ? "livro" : "livros")</span>
     </div>
 
-    @if (!Items.Any())
+    @if (IsLoading)
+    {
+        <p class="favs-loading">Carregando favoritos…</p>
+    }
+    else if (!Items.Any())
     {
         <div class="favs-empty">
             <span class="favs-empty__icon"><i class="fa-regular fa-heart"></i></span>

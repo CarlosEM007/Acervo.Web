@@ -1,12 +1,16 @@
-﻿/* ── Variáveis ───────────────────────────────────────────────────── */
-:root {
+﻿/* ── Wrapper + variáveis ─────────────────────────────────────────── */
+/* Nota: as variáveis ficam no .input-wrapper (raiz do componente) e não em
+   :root, pois no CSS isolado do Blazor o seletor :root é reescrito para
+   :root[b-xxx] e nunca casa com o <html> — o que deixava --input-text
+   indefinido e o texto digitado ilegível (cinza claro). */
+.input-wrapper {
     --input-height: 48px;
     --input-font-size: 0.9375rem;
     --input-padding-x: 0.25rem;
     --input-label: #6b7280;
     --input-label-focus: #111827;
     --input-text: #111827;
-    --input-placeholder: rgba(107, 114, 128, 0.45);
+    --input-placeholder: #9ca3af;
     --input-line: #e5e7eb;
     --input-line-focus: #111827;
     --input-line-error: #ef4444;
@@ -15,10 +19,7 @@
     --input-helper: #9ca3af;
     --input-error-text: #ef4444;
     --input-transition: background-color 0.25s ease, border-color 0.2s ease;
-}
 
-/* ── Wrapper ─────────────────────────────────────────────────────── */
-.input-wrapper {
     display: inline-flex;
     flex-direction: column;
     gap: 4px;
@@ -76,15 +77,15 @@
     border: none;
     outline: none;
     background: transparent;
-    font-size: var(--input-font-size);
-    color: var(--input-text);
+    font-size: var(--input-font-size, 0.9375rem);
+    color: var(--input-text, #111827);
     font-family: inherit;
     padding: 0;
     min-width: 0;
 }
 
     .input-field::placeholder {
-        color: var(--input-placeholder);
+        color: var(--input-placeholder, #9ca3af);
         opacity: 1;
     }
 

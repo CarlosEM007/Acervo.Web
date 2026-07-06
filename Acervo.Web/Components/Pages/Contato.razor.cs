@@ -1,3 +1,4 @@
+using Acervo.Web.Service;
 using Microsoft.AspNetCore.Components;
 
 namespace Acervo.Web.Components.Pages
@@ -5,6 +6,7 @@ namespace Acervo.Web.Components.Pages
     public partial class Contato
     {
         [Inject] private NavigationManager Navigation { get; set; } = default!;
+        [Inject] private ToastService      Toast      { get; set; } = default!;
 
         private string? ContactName { get; set; }
         private string? ContactEmail { get; set; }
@@ -26,7 +28,7 @@ namespace Acervo.Web.Components.Pages
                 "Sim! Sua biblioteca fica disponível em qualquer dispositivo com acesso ao Acervo."),
         };
 
-        private async Task SendMessage()
+        private void SendMessage()
         {
             FormError = null;
 
@@ -34,13 +36,12 @@ namespace Acervo.Web.Components.Pages
                 || string.IsNullOrWhiteSpace(ContactMessage))
             {
                 FormError = "Preencha todos os campos obrigatórios.";
+                Toast.ShowError(FormError);
                 return;
             }
 
-            IsSending = true;
-            await Task.Delay(800);
-            IsSending = false;
             Sent = true;
+            Toast.ShowSuccess("Mensagem enviada! Responderemos em breve.");
         }
     }
 }

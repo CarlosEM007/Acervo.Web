@@ -10,6 +10,7 @@ namespace Acervo.Web.Components.Pages
         [Inject] private AuthorService      AuthorSvc  { get; set; } = default!;
         [Inject] private CategoryService    CatSvc     { get; set; } = default!;
         [Inject] private StockItemService   StockSvc   { get; set; } = default!;
+        [Inject] private ToastService       Toast      { get; set; } = default!;
 
         // ── Estado de UI ───────────────────────────────────────────
         private bool IsLoading { get; set; } = true;
@@ -87,7 +88,10 @@ namespace Acervo.Web.Components.Pages
                     .OrderByDescending(c => c.Count)
                     .ToList();
             }
-            catch { /* API offline */ }
+            catch
+            {
+                Toast.ShowError("Não foi possível carregar o catálogo.");
+            }
             finally
             {
                 IsLoading = false;

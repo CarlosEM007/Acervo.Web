@@ -1,6 +1,5 @@
 @page "/conta"
 @layout MainLayout
-@rendermode InteractiveServer
 @using Acervo.Web.Components.Layout
 @using Acervo.Web.Components.Shared
 
@@ -48,34 +47,6 @@
                             Salvar alterações
                         </AppButton>
                     </div>
-                    @if (!string.IsNullOrWhiteSpace(ProfileMsg))
-                    {
-                        <div class="account-feedback account-feedback--success">@ProfileMsg</div>
-                    }
-                </div>
-            </div>
-
-            <div class="account-section">
-                <h2 class="account-section__title">Alterar senha</h2>
-                <div class="account-form">
-                    <AppInput Label="Senha atual" Type="password" Width="100%"
-                              @bind-Value="CurrentPassword" />
-                    <AppInput Label="Nova senha" Type="password" Width="100%"
-                              @bind-Value="NewPassword" />
-                    <AppInput Label="Confirmar nova senha" Type="password" Width="100%"
-                              @bind-Value="ConfirmPassword" />
-                    <div class="account-form__actions">
-                        <AppButton Variant="secondary" Size="md" Width="160px"
-                                   OnClickCallback="ChangePassword">
-                            Alterar senha
-                        </AppButton>
-                    </div>
-                    @if (!string.IsNullOrWhiteSpace(PasswordMsg))
-                    {
-                        <div class="account-feedback @(PasswordSuccess ? "account-feedback--success" : "account-feedback--error")">
-                            @PasswordMsg
-                        </div>
-                    }
                 </div>
             </div>
         }

@@ -9,6 +9,9 @@ namespace Acervo.Web.Service
         public async Task<List<FavoritesDto>> GetAll() =>
             await http.GetFromJsonAsync<List<FavoritesDto>>(FavoritesEndpoints.GetAll()) ?? [];
 
+        public async Task<FavoritesDto?> GetByUser(long userId) =>
+            (await GetAll()).FirstOrDefault(f => f.UserId == userId);
+
         public async Task<FavoritesDto?> GetById(long id)
         {
             var response = await http.GetAsync(FavoritesEndpoints.GetById(id));
